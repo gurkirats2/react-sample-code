@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+  height: 100%;
+  width: 100%;
+  font-family: "Anek Bangla", "sans-serif";
+}
+
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: unset;
+}
+
+.playStoreBtn {
+  background: linear-gradient(to right, #0000005e 50%, white 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  transition: all 0.5s ease-out;
+  background-color: #fff;
+  border-radius: 999px;
+  outline: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  &:hover {
+    background-position: left bottom;
+  }
+}
+
+.form_field {
+  position: relative;
+  .input-field {
+    background: #ffffff;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    margin-bottom: 0.7rem;
+    border: 1px solid #dfdfdf;
+  }
+
+  .suffix {
+    position: absolute;
+    left: 10px;
+    top: 20px;
+    bottom: 0;
+    margin: auto;
+  }
+  .prefix {
+    position: absolute;
+    right: 11px;
+    top: 20px;
+    bottom: 0;
+    margin: auto;
+  }
+}
+
+.validation-err-message {
+  color: red;
+  position: absolute;
+  bottom: -11px;
+  font-size: 13px;
+}
+
+input::placeholder {
+  font-size: 14px;
+}
+.input-field::after {
+  content: "";
+  display: none;
+}
+
+.listItem {
+  color: #3ab7f7;
+  span {
+    color: #000;
+    font-size: 14px;
+  }
+}
+
+.profile_dropdown {
+  .dropdown_item {
+    display: none;
+    animation: growDown 300ms ease-in-out;
+    transform-origin: top center;
+  }
+  .active {
+    display: block;
+  }
+}
+
+@keyframes growDown {
+  0% {
+    transform: scaleY(0);
+  }
+  80% {
+    transform: scaleY(1.1);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.MuiFormControlLabel-label {
+  font-weight: 700 !important;
+  margin-left: 0.5rem !important;
+}
+
+.MuiContainer-root {
+  max-width: 1536px !important;
+}
+
+@media screen and (max-width: 1500px) {
+  .MuiContainer-root {
+    max-width: 1200px !important;
+  }
+  .header_overlay {
+    height: 920px;
+    width: 78%;
+  }
+}
+
+.MuiAvatar-img {
+  object-fit: inherit !important;
+}
+
+.slide-in-left {
+  /* Optional: Hide the element initially */
+  transform: translateX(
+    -100%
+  ); /* Move the element 100% off-screen to the left */
+}
+
+.slide-in-right {
+  transform: translateX(100%);
+}

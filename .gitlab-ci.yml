@@ -1,0 +1,51 @@
+stages:
+  - deploy
+  - notify_slack
+
+deploy-job:
+  stage: deploy
+  environment:
+    name: development
+  before_script:
+    - 'apt-get update -qy'
+    - 'apt-get install -y sshpass'
+  script:
+    - 'sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@93.127.199.69 "cd $APPLICATION_PATH && git pull"'
+  variables:
+    APPLICATION_PATH: "/var/www/html/lc-nurse-web/"
+    SSH_PASSWORD: "$CI_DEPLOY_PASSWORD"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+
+notify_slack_success:
+  stage: notify_slack
+  before_script:
+    - apt-get update -y
+    - apt-get install -y curl
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "develop" ] && [ "$NOTIFY_SLACK" != "false" ]; then
+        echo "Sending success notification to Slack for branch $CI_COMMIT_BRANCH"
+        curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"Deployment to development environment successful for branch '"$CI_COMMIT_BRANCH"'"}' \
+          "https://hooks.slack.com/services/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"
+      fi
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "push" && $CI_PIPELINE_SUCCESS == "true" && ($NOTIFY_SLACK == null || $NOTIFY_SLACK != "false")'
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PIPELINE_SUCCESS == "true" && ($NOTIFY_SLACK == null || $NOTIFY_SLACK != "false")'
+
+notify_slack_failure:
+  stage: notify_slack
+  before_script:
+    - apt-get update -y
+    - apt-get install -y curl
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "develop" ] && [ "$NOTIFY_SLACK" != "false" ]; then
+        curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"Deployment to development environment failed for branch '"$CI_COMMIT_BRANCH"'"}' \
+          "https://hooks.slack.com/services/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"
+      fi
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event") && $CI_PIPELINE_SUCCESS == "false" && ($NOTIFY_SLACK == null || $NOTIFY_SLACK != "false")'
